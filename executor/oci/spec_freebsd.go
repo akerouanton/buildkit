@@ -35,7 +35,7 @@ func generateProcessModeOpts(mode ProcessMode) ([]oci.SpecOpts, error) {
 	return nil, nil
 }
 
-func generateIDmapOpts(idmap *user.IdentityMapping) ([]oci.SpecOpts, error) {
+func GenerateIDmapOpts(idmap *user.IdentityMapping) ([]oci.SpecOpts, error) {
 	if idmap == nil {
 		return nil, nil
 	}

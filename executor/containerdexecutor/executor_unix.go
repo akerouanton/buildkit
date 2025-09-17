@@ -139,6 +139,12 @@ func (w *containerdExecutor) createOCISpec(ctx context.Context, id, resolvConf, 
 		opts = append(opts, containerdoci.WithRootFSReadonly())
 	}
 
+	idMapOpts, err := oci.GenerateIDmapOpts(w.idmap)
+	if err != nil {
+		return nil, nil, err
+	}
+	opts = append(opts, idMapOpts...)
+
 	processMode := oci.ProcessSandbox // FIXME(AkihiroSuda)
 	spec, cleanup, err := oci.GenerateSpec(ctx, meta, mounts, id, resolvConf, hostsFile, namespace, w.cgroupParent, processMode, nil, w.apparmorProfile, w.selinux, w.traceSocket, w.cdiManager, opts...)
 	if err != nil {

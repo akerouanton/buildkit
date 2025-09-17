@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/moby/buildkit/util/bklog"
+	"github.com/moby/sys/user"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
@@ -42,6 +43,7 @@ type containerdExecutor struct {
 	rootless         bool
 	runtime          *RuntimeInfo
 	cdiManager       *cdidevices.Manager
+	idmap            *user.IdentityMapping
 }
 
 // OnCreateRuntimer provides an alternative to OCI hooks for applying network
@@ -75,6 +77,7 @@ type ExecutorOptions struct {
 	Rootless         bool
 	Runtime          *RuntimeInfo
 	CDIManager       *cdidevices.Manager
+	IdentityMapping  *user.IdentityMapping
 }
 
 // New creates a new executor backed by connection to containerd API
@@ -96,6 +99,7 @@ func New(executorOpts ExecutorOptions) executor.Executor {
 		rootless:         executorOpts.Rootless,
 		runtime:          executorOpts.Runtime,
 		cdiManager:       executorOpts.CDIManager,
+		idmap:            executorOpts.IdentityMapping,
 	}
 }
 

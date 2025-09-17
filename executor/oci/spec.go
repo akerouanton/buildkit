@@ -100,7 +100,7 @@ func GenerateSpec(ctx context.Context, meta executor.Meta, mounts []executor.Mou
 		return nil, nil, err
 	}
 
-	if idmapOpts, err := generateIDmapOpts(idmap); err == nil {
+	if idmapOpts, err := GenerateIDmapOpts(idmap); err == nil {
 		opts = append(opts, idmapOpts...)
 	} else {
 		return nil, nil, err

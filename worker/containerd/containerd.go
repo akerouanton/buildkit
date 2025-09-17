@@ -23,6 +23,7 @@ import (
 	"github.com/moby/buildkit/util/winlayers"
 	"github.com/moby/buildkit/worker/base"
 	wlabel "github.com/moby/buildkit/worker/label"
+	"github.com/moby/sys/user"
 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/semaphore"
@@ -46,6 +47,7 @@ type WorkerOptions struct {
 	TraceSocket     string
 	Runtime         *RuntimeInfo
 	CDIManager      *cdidevices.Manager
+	IdentityMapping *user.IdentityMapping
 }
 
 // NewWorkerOpt creates a WorkerOpt.
@@ -135,7 +137,7 @@ func newContainerd(client *ctd.Client, workerOpts WorkerOptions) (base.WorkerOpt
 		}
 	}
 
-	snap := containerdsnapshot.NewSnapshotter(workerOpts.SnapshotterName, client.SnapshotService(workerOpts.SnapshotterName), workerOpts.Namespace, nil)
+	snap := containerdsnapshot.NewSnapshotter(workerOpts.SnapshotterName, client.SnapshotService(workerOpts.SnapshotterName), workerOpts.Namespace, workerOpts.IdentityMapping)
 
 	if err := cache.MigrateV2(
 		context.TODO(),
@@ -165,6 +167,7 @@ func newContainerd(client *ctd.Client, workerOpts WorkerOptions) (base.WorkerOpt
 		Runtime:          workerOpts.Runtime,
 		CDIManager:       workerOpts.CDIManager,
 		NetworkProviders: np,
+		IdentityMapping:  workerOpts.IdentityMapping,
 	}
 
 	opt := base.WorkerOpt{
